@@ -104,4 +104,14 @@ router.post('/signin',async (req,res)=>{
         
     }
 })
+
+router.get('/allUsers',async(req,res)=>{
+    const users = await newUserModel.find();
+    res.json({
+        user: users.map((u)=>{{
+            firstname : u.firstname
+             
+        }})
+    })
+})
 module.exports= router
