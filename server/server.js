@@ -14,10 +14,6 @@ require('dotenv').config();
 const app = express()
 const server = createServer(app);
 
-//middlewares
-app.use(express.json());
-app.use(cors({origin : '*'}));
-app.use('/user',userrouter);
 
 const io = new Server(server, {
     cors: {
@@ -26,6 +22,11 @@ const io = new Server(server, {
       credentials: true,
     }
   });
+  
+  //middlewares
+  app.use(express.json());
+  app.use(cors({origin : '*'}));
+  app.use('/user',userrouter);
   
   io.on('connection', (socket) => {
     console.log("connection established", socket.id);
@@ -37,7 +38,6 @@ const io = new Server(server, {
     })
 });
    
-
 
 
 

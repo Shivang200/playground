@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const zod = require('zod');
 const { default: mongoose } = require('mongoose')
+const authMiddleware = require('../middlewares/middleware.js')
 
 
 
@@ -114,4 +115,28 @@ router.get('/allUsers',async(req,res)=>{
         }})
     })
 })
+router.get('/getUser', authMiddleware, async (req, res) => {
+    try {
+      const userId = req.userId; // Ensure authMiddleware sets req.userId
+  
+      // Find user by ID in the database
+      const findUsername = await newUserModel.findOne({ _id: userId });
+  
+      // Handle case where user is not found
+      if (!findUsername) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      const name = findUsername.firstname; // Extract the firstname field
+  
+      // Respond with the user's first name
+      res.json({
+        firstname: name,
+      });
+    } catch (error) {
+      console.error(error); // Log any errors
+      res.status(500).json({ error: 'Server error' }); // Send generic server error response
+    }
+  });
+
 module.exports= router
