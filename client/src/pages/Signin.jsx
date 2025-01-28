@@ -26,9 +26,10 @@ export default function Signin() {
       console.log(resp);
       console.log(resp.data.token)
       localStorage.setItem("token",resp.data.token);
-
       // Navigate to the dashboard
-    //   navigate("/dashboard");
+        navigate("/");
+
+
     } catch (err) {
       // Log error and show a user-friendly message
       console.error("Sign-in error:", err.response?.data || err.message);

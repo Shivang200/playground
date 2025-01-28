@@ -66,7 +66,7 @@ export default function SignUp() {
 
               localStorage.setItem("token", response.data.token);
               console.log(response.data.token);
-              //   navigate("/dashboard")
+                navigate("/")
             }}
           />
           <BottomWarning
