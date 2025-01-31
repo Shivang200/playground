@@ -63,7 +63,7 @@ export default function Signin() {
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           <BottomWarning
             label={"Don't have an account? "}
-            to={"/"}
+            to={"/signup"}
             Bottomtext={"Sign Up"}
           />
         </div>

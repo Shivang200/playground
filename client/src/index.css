@@ -1,19 +1,138 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+ /* {Tailwind CSS Animations (Ensure Tailwind supports this)} */
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+ @keyframes scrollFeatures {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+.animate-scroll {
+  animation: scrollFeatures 40s linear infinite;
+}
+
+.features-container {
+  display: flex;
+  width: fit-content;
+}
+
+.morphing-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #6a1b9a, #d500f9, #9c27b0, #ab47bc);
+  filter: blur(10px); /* Add blur effect */
+  animation: morph 4s infinite alternate;
+
+  
+  
+}
+.morphing-circle:hover{
+  animation-play-state: paused;
+}
+
+@keyframes morph {
+  0% {
+    transform: scale(1);
+    background: linear-gradient(45deg, #6a1b9a, #d500f9);
+  }
+  25% {
+    transform: scale(1.2);
+    background: linear-gradient(45deg, #9c27b0, #ab47bc);
+  }
+  50% {
+    transform: scale(1);
+    background: linear-gradient(45deg, #ab47bc, #d500f9);
+  }
+  75% {
+    transform: scale(1.2);
+    background: linear-gradient(45deg, #9c27b0, #6a1b9a);
+  }
+  100% {
+    transform: scale(1);
+    background: linear-gradient(45deg, #6a1b9a, #d500f9);
+  }
+}
+/* Typing effect */
+.typing-effect {
+  display: inline-block;
+  overflow: hidden; /* Ensures the text is hidden initially */
+  white-space: nowrap; /* Prevents text from wrapping */
+  border-right: 3px solid #fff; /* Creates the cursor effect */
+  animation: typing 3.5s steps(30) 4s forwards, blink 0.75s step-end infinite; /* Typing animation */
+  min-width: 0
+}
+
+/* Typing animation */
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Blinking cursor effect */
+@keyframes blink {
+  50% {
+    border-color: transparent;
+  }
+}
+/* This is for your loader */
+/* This is for your loader */
+/* This is for your loader */
+#loader {
+  height: 100vh;
+  width: 100%;
+  background-color: #000;
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all ease 1s;
+}
+
+#loader h1 {
+  font-size: 4vw;
+  /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+  color: transparent;
+  /* background: linear-gradient(to right, orange, orangered); */
+  -webkit-background-clip: text;
+  position: absolute;
+  opacity: 0;
+  line-height: 1.2;
+  animation-name: load;
+  animation-duration: 1s; 
+  animation-delay: 1s;
+  animation-timing-function: ease;
+  /* animation-fill-mode: forwards; Keeps final state after animation ends */
+}
+
+
+#loader h1:nth-child(2) {
+  animation-delay: 2s; /* Delays second word by 2s */
+}
+
+#loader h1:nth-child(3) {
+  animation-delay: 3s; /* Delays third word by 4s */
+}
+
+/* Keyframes for the fade-in effect */
+@keyframes load {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
