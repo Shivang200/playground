@@ -100,7 +100,7 @@ function Chat() {
           {createdRoom && (
             <div className="bg-gradient-to-r from-purple-400 via-indigo-500 to-blue-500 bg-clip-text text-transparent">
               <p>
-                Room Created:`${import.meta.env.VITE_APP_URL}/chat/{createdRoom.roomId}`
+                Room Created: https://ghostnet-delta.vercel.app/chat/{createdRoom.roomId}
               </p>
               <p>
                 Share this URL to invite others (ensure they are signed up).
