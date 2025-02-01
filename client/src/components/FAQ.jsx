@@ -2,7 +2,7 @@ import React from "react";
 
 const FAQ = () => {
   return (
-    <section id="faq" className="py-16 bg-black text-purple-500 relative">
+    <section id="faq" className="py-16 bg-black text-purple-500 relative ">
       <div className="container mx-auto text-center">
         <h2 className="text-4xl font-semibold mb-8 text-gray-300">
           Everything You Need to Know

@@ -1,128 +1,145 @@
-import { useState, useMemo, useEffect, useRef } from "react"; // Importing hooks for state management and memoization
-import { io } from "socket.io-client"; // Importing Socket.IO client for real-time communication
-import React from "react"; // Importing React library
-import Message from "./Message"; // Importing the Message component to display individual messages
-import axios from "axios"; // Importing axios for making API calls
-import { Navbar } from "../components/Navbar";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { io } from "socket.io-client";
+import axios from "axios";
+import NavbarForChat from "./NavbarForChat";
+import { useNavigate, useParams } from "react-router-dom";
+import Message from "./Message"; // Import the Message component
 
 function Chat() {
-  const [message, setMessage] = useState(""); // State to hold the current input message
-  const [messages, setMessages] = useState([]); // State to hold the list of messages
-
-  // Reference for the last message to scroll into view
-  const lastMessageRef = useRef(null);
-
-  // Creating and memoizing the Socket.IO connection to avoid reconnecting on every render
+  const { roomId } = useParams();
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [createdRoom, setCreatedRoom] = useState(null);
+  const [roomInput, setRoomInput] = useState("");
+  const lastMessageRef = useRef(null); // Reference for the last message
   const socket = useMemo(() => io("http://localhost:5000"), []);
+  const navigate = useNavigate();
 
-  // Register socket event listeners in a useEffect to ensure they are added only once
   useEffect(() => {
-    // Listening for the "recieve" event from the server
+    // Clear messages when a new room is created or joined
+    setMessages([]);
+
     socket.on("recieve", (e) => {
       if (e.msg.trim() !== "") {
-        setMessages((prevMessages) => [...prevMessages, e]); // Append new message to the list
+        setMessages((prevMessages) => [...prevMessages, e]);
       }
     });
 
-    // Cleanup function to remove the event listener when the component unmounts
+    socket.on("room-created", (data) => {
+      setCreatedRoom(data);
+      navigate(`/chat/${data.roomId}`); // Redirect to the new room
+    });
+
+    socket.on("joined-room", (data) => {
+      console.log(`Joined room: ${data.roomId}`);
+    });
+
+    if (roomId) {
+      socket.emit("join-room", roomId);
+    }
+
     return () => {
       socket.off("recieve");
+      socket.off("room-created");
+      socket.off("joined-room");
     };
-  }, [socket]);
+  }, [socket, roomId]);
 
-  // Function to handle the form submission (sending a message)
+  // Scroll to the last message whenever messages change
+  useEffect(() => {
+    if (lastMessageRef.current) {
+      lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent the default form submission behavior
-
-    if (message.trim()) { // Ensure message is not empty
+    e.preventDefault();
+    if (message.trim()) {
       try {
-        // API call to fetch user details using axios
         const response = await axios.get("http://localhost:5000/user/getuser", {
           headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"), // Attaching token for authentication
+            Authorization: "Bearer " + localStorage.getItem("token"),
           },
         });
-
-        const userFirstname = response.data.firstname; // Extract user's first name from response
-        console.log("User's firstname:", userFirstname); // Debugging user data
-
-        // Emitting the message and user details to the server
-        socket.emit("send", { msg: message, user: userFirstname });
-
-        // Add the message to the local message list
-        // setMessages((prevMessages) => [...prevMessages, { msg: message, user: userFirstname }]);
-
-        // Clear the message input after sending
+        const userFirstname = response.data.firstname;
+        socket.emit("send", { msg: message, user: userFirstname, roomId });
         setMessage('');
       } catch (error) {
-        console.error("Error fetching user details:", error); // Log error if API call fails
+        console.error("Error fetching user details:", error);
       }
     }
   };
 
-  // Handle Enter key press to send the message
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) { // If Enter is pressed and Shift is not held
-      e.preventDefault(); // Prevent the default action (like a new line in the textarea)
-      handleSubmit(e); // Call handleSubmit to send the message
+  const createRoom = () => {
+    socket.emit("create-room"); // Emit room creation request
+  };
+
+  const joinRoom = () => {
+    if (roomInput.trim()) {
+      socket.emit("join-room", roomInput); // Emit join-room event
     }
   };
 
-  // Scroll to the last message after the messages are updated
-  useEffect(() => {
-    if (lastMessageRef.current) {
-      lastMessageRef.current.scrollIntoView({ behavior: "smooth" }); // Smooth scroll to the last message
-    }
-  }, [messages]); // This effect runs every time the messages change
-
   return (
-    <>
-      <div id="main" className="w-screen h-screen">
-        {/* Main container for the chat application */}
-        <div
-          id="page1"
-          className="w-full h-full bg-gradient-to-r from-black to-black flex flex-col justify-between"
-        >
-          {/* Navigation bar */}
-          <Navbar/>
+    <div id="main" className="w-screen h-screen">
+      <div id="page1" className="w-full h-full bg-gradient-to-r from-black to-black flex flex-col justify-between">
+        
+        <NavbarForChat />
 
-          {/* Message display area */}
-          
-          <div id="msg" className="hide-scrollbar flex-1 overflow-y-auto overflow-hidden p-4">
-            <div className="flex flex-col ml-10 items-start justify-center text-white">
-              {/* Mapping over the messages array to render each message using the Message component */}
-              {messages.map((e, index) => (
-                <Message
-                  key={index}
-                  message={e.msg} // Pass only the message text to Message
-                  user={e.user} // Pass user info to Message
-                />
-              ))}
-              {/* Reference the last message to scroll into view */}
-              <div ref={lastMessageRef} />
-            </div>
+    
+        <div id="msg" className="hide-scrollbar flex-1 overflow-y-auto overflow-hidden p-4">
+          <div className="flex flex-col ml-10 items-start justify-center text-white">
+            {messages.map((e, index) => (
+              <Message key={index} message={e.msg} user={e.user} /> // Use your Message component here
+            ))}
+            <div ref={lastMessageRef} /> {/* This will scroll to the last message */}
           </div>
-
-          {/* Input form for sending messages */}
-          <form onSubmit={handleSubmit} id="chat" className="flex">
-            <textarea
-              className="bg-slate-300 text-black h-10 w-2/3 ml-48 mb-11 rounded-md justify-end mt-auto resize-none text-center"
-              value={message} // Bind textarea value to the message state
-              onChange={(e) => setMessage(e.target.value)} // Update message state on input change
-              onKeyDown={handleKeyDown} // Listen for the Enter key press
-            ></textarea>
-
-            {/* Send button */}
-            <button
-              type="submit" // Button will now trigger form submission
-              className="h-10 rounded-md w-20 bg-purple-600 hover:bg-purple-500 ml-4 border-transparent"
-            >
-              Send
-            </button>
-          </form>
         </div>
+
+        <form onSubmit={handleSubmit} id="chat" className="flex">
+          <textarea
+            className="bg-slate-300 text-black h-10 w-2/3 ml-48 mb-11 rounded-md justify-end mt-auto resize-none text-center"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSubmit(e)}
+          ></textarea>
+
+          <button type="submit" className="h-10 rounded-md w-20 bg-purple-600 hover:bg-purple-500 ml-4 border-transparent text-white">
+            Send
+          </button>
+        </form>
+       
+        <div className="room-section absolute top-4 right-4 z-50">
+          {/* <h2 className="text-white">Create or Join a Room</h2> */}
+          <button onClick={createRoom} className="create-room-button h-10 rounded-md w-28 bg-purple-600 hover:bg-purple-500  border-transparent text-white">
+            Create Room
+          </button>
+
+          {createdRoom && (
+            <div className="text-transparent bg-gradient-to-r from-purple-400 via-indigo-500 to-blue-500 bg-clip-text drop-shadow-[0_0_20px_rgba(120,80,255,1)]">
+              <p>Room Created: http://localhost:5173/chat/{createdRoom.roomId}</p>
+              <p>Share this URL to invite others (ensure they are signed up).</p>
+
+            </div>
+          )}
+
+          {/* <div>
+          join room and label not working and no need of ot as of now
+            <input
+              type="text"
+              value={roomInput}
+              onChange={(e) => setRoomInput(e.target.value)}
+              placeholder="Enter Room ID to Join"
+              className="p-2 rounded-md text-black"
+            />
+            <button onClick={joinRoom} className="join-room-button text-white bg-green-600 hover:bg-green-500 p-2 rounded-md">
+              Join Room
+            </button>
+          </div> */}
+        </div>
+        
       </div>
-    </>
+    </div>
   );
 }
 

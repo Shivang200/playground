@@ -4,21 +4,15 @@ import Signin from './pages/Signin.jsx';
 import Landing from './pages/Landing.jsx';
 import Chat from './utils/Chat.jsx';
 
-
-
-
 function App() {
   return (
     <BrowserRouter>
-    
       <Routes>
-        {/* <Route path='/' element={<div>Home</div>} /> */}
-        <Route path="/" element={<Landing/>} />
+        <Route path="/" element={<Landing />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<Signin />} />
-        <Route path="/chat" element={<Chat/>} />
-        
-       
+        {/* Single route for Chat, handles both room creation and joining */}
+        <Route path="/chat/:roomId?" element={<Chat />} />
       </Routes>
     </BrowserRouter>
   );

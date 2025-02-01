@@ -1,6 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { HashLink } from 'react-router-hash-link';
+
 import { useState } from "react";
+import Feature from "./Feature";
 
 export const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -11,14 +14,14 @@ export const Navbar = () => {
         <Link to="/" className="text-3xl font-bold text-purple-500">ChatHub</Link>
         <ul className="hidden md:flex space-x-8 text-gray-300 font-medium">
           <li>
-            <Link to="/" className="hover:text-white">
-              Features
-            </Link>
+          <HashLink smooth to="#features" className="block hover:text-white">
+            Features
+          </HashLink>
           </li>
           <li>
-            <Link to="/" className="hover:text-white">
+            <HashLink smooth to="#faq" className="hover:text-white">
               FAQs
-            </Link>
+            </HashLink>
           </li>
           <li>
             <Link
