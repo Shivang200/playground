@@ -23,7 +23,7 @@ export default function Signin() {
       });
 
       // Save the token to 
-      console.log(resp);
+      // console.log(resp);
       // console.log(resp.data.token)
       localStorage.setItem("token",resp.data.token);
       // Navigate to the dashboard
