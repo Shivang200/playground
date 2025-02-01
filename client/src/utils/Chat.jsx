@@ -28,6 +28,7 @@ function Chat() {
     socket.on("room-created", (data) => {
       setCreatedRoom(data);
       navigate(`/chat/${data.roomId}`); // Redirect to the new room
+      setTimeout(() => setCreatedRoom(null), 15000); // Clear the room creation message after 15 seconds
     });
 
     socket.on("joined-room", (data) => {
@@ -63,7 +64,7 @@ function Chat() {
         });
         const userFirstname = response.data.firstname;
         socket.emit("send", { msg: message, user: userFirstname, roomId });
-        setMessage('');
+        setMessage("");
       } catch (error) {
         console.error("Error fetching user details:", error);
       }
@@ -81,63 +82,68 @@ function Chat() {
   };
 
   return (
-    <div id="main" className="w-screen h-screen">
-      <div id="page1" className="w-full h-full bg-gradient-to-r from-black to-black flex flex-col justify-between">
-        
+    <div id="main" className="w-screen h-screen flex flex-col overflow-hidden">
+      <div
+        id="page1"
+        className="w-full h-full bg-gradient-to-r from-black to-black flex flex-col justify-between"
+      >
         <NavbarForChat />
 
-    
-        <div id="msg" className="hide-scrollbar flex-1 overflow-y-auto overflow-hidden p-4">
-          <div className="flex flex-col ml-10 items-start justify-center text-white">
-            {messages.map((e, index) => (
-              <Message key={index} message={e.msg} user={e.user} /> // Use your Message component here
-            ))}
-            <div ref={lastMessageRef} /> {/* This will scroll to the last message */}
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} id="chat" className="flex">
-          <textarea
-            className="bg-slate-300 text-black h-10 w-2/3 ml-48 mb-11 rounded-md justify-end mt-auto resize-none text-center"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSubmit(e)}
-          ></textarea>
-
-          <button type="submit" className="h-10 rounded-md w-20 bg-purple-600 hover:bg-purple-500 ml-4 border-transparent text-white">
-            Send
-          </button>
-        </form>
-       
-        <div className="room-section absolute top-4 right-4 z-50">
-          {/* <h2 className="text-white">Create or Join a Room</h2> */}
-          <button onClick={createRoom} className="create-room-button h-10 rounded-md w-28 bg-purple-600 hover:bg-purple-500  border-transparent text-white">
+        <div className="room-section fixed top-16 left-0 right-0 z-50 text-white text-center md:absolute md:top-4 md:right-4 md:left-auto md:text-right">
+          <button
+            onClick={createRoom}
+            className="h-10 rounded-md w-full md:w-28 bg-purple-600 hover:bg-purple-500 mb-4 md:mb-0 border-transparent text-white"
+          >
             Create Room
           </button>
 
           {createdRoom && (
-            <div className="text-transparent bg-gradient-to-r from-purple-400 via-indigo-500 to-blue-500 bg-clip-text drop-shadow-[0_0_20px_rgba(120,80,255,1)]">
-              <p>Room Created: http://localhost:5173/chat/{createdRoom.roomId}</p>
-              <p>Share this URL to invite others (ensure they are signed up).</p>
-
+            <div className="bg-gradient-to-r from-purple-400 via-indigo-500 to-blue-500 bg-clip-text text-transparent">
+              <p>
+                Room Created: http://localhost:5173/chat/{createdRoom.roomId}
+              </p>
+              <p>
+                Share this URL to invite others (ensure they are signed up).
+              </p>
             </div>
           )}
-
-          {/* <div>
-          join room and label not working and no need of ot as of now
-            <input
-              type="text"
-              value={roomInput}
-              onChange={(e) => setRoomInput(e.target.value)}
-              placeholder="Enter Room ID to Join"
-              className="p-2 rounded-md text-black"
-            />
-            <button onClick={joinRoom} className="join-room-button text-white bg-green-600 hover:bg-green-500 p-2 rounded-md">
-              Join Room
-            </button>
-          </div> */}
         </div>
-        
+
+        <div
+          id="msg"
+          className="hide-scrollbar flex-1 overflow-y-auto p-4 mt-32 md:mt-20"
+        >
+          <div className="flex flex-col items-start justify-center text-white space-y-2 break-words">
+            {messages.map((e, index) => (
+              <Message key={index} message={e.msg} user={e.user} /> // Use your Message component here
+            ))}
+            <div ref={lastMessageRef} />{" "}
+            {/* This will scroll to the last message */}
+          </div>
+        </div>
+        <form
+          onSubmit={handleSubmit}
+          id="chat"
+          className="flex flex-col md:flex-row items-center justify-center mb-4 md:mb-11 px-4 md:px-0"
+        >
+          <div className="flex justify-center items-center w-full">
+            <textarea
+              className="bg-slate-300 text-black h-10 w-full md:w-2/3 rounded-md resize-none text-center"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && !e.shiftKey && handleSubmit(e)
+              }
+            ></textarea>
+
+            <button
+              type="submit"
+              className="h-10 px-4 py-2 rounded-md w-auto md:w-20 bg-purple-600 hover:bg-purple-500 md:ml-4 border-transparent text-white"
+            >
+              Send
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

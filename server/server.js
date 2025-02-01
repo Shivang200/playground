@@ -11,7 +11,7 @@ const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // Make sure this is the frontend URL
+    origin: "http://localhost:5173",
     methods: ["GET", "POST"],
     credentials: true,
   }
@@ -22,37 +22,44 @@ app.use(express.json());
 app.use(cors({ origin: '*' }));
 app.use('/user', userrouter);
 
-// In-memory room store (just for testing, you can use DB to persist rooms)
-const rooms = {};
+// In-memory storage for messages in rooms
+const rooms = { default: [] }; // Default chat room
 
 // Socket.io connection
 io.on('connection', (socket) => {
-  console.log("Connection established", socket.id);
+  console.log(`User connected: ${socket.id}`);
   
-  socket.emit("welcome", socket.id);
+  // Automatically join the default room
+  socket.join("default");
+  socket.emit('joined-room', { roomId: "default", messages: rooms["default"] });
 
-  // Listen for room creation request
+  // Create Room
   socket.on('create-room', () => {
-    const roomId = Math.random().toString(36).substring(2, 9); // Generate a random room ID
-    rooms[roomId] = []; // Create room in memory
-    console.log(`Room created with ID: ${roomId}`);
-    socket.emit('room-created', { roomId }); // Send the new room ID to the client
+    const roomId = Math.random().toString(36).substring(2, 9);
+    rooms[roomId] = []; // Initialize new room
+    console.log(`Room created: ${roomId}`);
+    socket.emit('room-created', { roomId });
   });
 
-  // Listen for "send" event and emit it to the correct room
-  socket.on('send', (data) => {
-    const { msg, user, roomId } = data;
-    io.to(roomId).emit('recieve', { msg, user, roomId }); // Emit to the specific room
-  });
-
-  // Listen for users joining rooms
+  // Join Room
   socket.on('join-room', (roomId) => {
+    if (!rooms[roomId]) {
+      rooms[roomId] = []; // Create room if it doesn't exist
+    }
+    socket.join(roomId);
+    console.log(`User ${socket.id} joined room ${roomId}`);
+    
+    // Send previous messages to user
+    socket.emit('joined-room', { roomId, messages: rooms[roomId] });
+  });
+
+  // Send Message
+  socket.on('send', (data) => {
+    const { msg, user, roomId = "default" } = data;
     if (rooms[roomId]) {
-      socket.join(roomId); // Join the room
-      console.log(`User ${socket.id} joined room ${roomId}`);
-      socket.emit('joined-room', { roomId });
-    } else {
-      socket.emit('error', { message: 'Room does not exist!' });
+      const messageData = { msg, user };
+      rooms[roomId].push(messageData); // Store message
+      io.to(roomId).emit('recieve', messageData); // Broadcast message
     }
   });
 

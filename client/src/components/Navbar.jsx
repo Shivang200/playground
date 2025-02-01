@@ -1,22 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { HashLink } from 'react-router-hash-link';
 
-import { useState } from "react";
-import Feature from "./Feature";
-
 export const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+
   return (
-    //   {/* Navbar */}
-    <nav className="bg-black shadow-md fixed w-full z-20 mb-4 mix-blend-difference ">
+    <nav className="bg-black shadow-md fixed w-full z-20 mb-4 mix-blend-difference">
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
         <Link to="/" className="text-3xl font-bold text-purple-500">ChatHub</Link>
+
+        {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-8 text-gray-300 font-medium">
           <li>
-          <HashLink smooth to="#features" className="block hover:text-white">
-            Features
-          </HashLink>
+            <HashLink smooth to="#features" className="block hover:text-white">
+              Features
+            </HashLink>
           </li>
           <li>
             <HashLink smooth to="#faq" className="hover:text-white">
@@ -32,6 +31,8 @@ export const Navbar = () => {
             </Link>
           </li>
         </ul>
+
+        {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center">
           <button onClick={() => setMenuOpen(!menuOpen)} className="text-white">
             <svg
@@ -51,6 +52,8 @@ export const Navbar = () => {
           </button>
         </div>
       </div>
+
+      {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden absolute left-0 right-0 top-16 bg-black text-white px-6 py-4 space-y-4">
           <ul>
