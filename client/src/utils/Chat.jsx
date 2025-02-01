@@ -12,7 +12,7 @@ function Chat() {
   const [createdRoom, setCreatedRoom] = useState(null);
   const [roomInput, setRoomInput] = useState("");
   const lastMessageRef = useRef(null); // Reference for the last message
-  const socket = useMemo(() => io("http://localhost:5000"), []);
+  const socket = useMemo(() => io(`${import.meta.env.VITE_APP_URL}`), []);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,7 +57,7 @@ function Chat() {
     e.preventDefault();
     if (message.trim()) {
       try {
-        const response = await axios.get("http://localhost:5000/user/getuser", {
+        const response = await axios.get(`${import.meta.env.VITE_APP_URL}/user/getuser`, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
@@ -100,7 +100,7 @@ function Chat() {
           {createdRoom && (
             <div className="bg-gradient-to-r from-purple-400 via-indigo-500 to-blue-500 bg-clip-text text-transparent">
               <p>
-                Room Created: http://localhost:5173/chat/{createdRoom.roomId}
+                Room Created:`${import.meta.env.VITE_APP_URL}/chat/{createdRoom.roomId}`
               </p>
               <p>
                 Share this URL to invite others (ensure they are signed up).
