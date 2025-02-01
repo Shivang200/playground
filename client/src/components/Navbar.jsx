@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { HashLink } from 'react-router-hash-link';
 
+
+
 export const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <nav className="bg-black shadow-md fixed w-full z-20 mb-4 mix-blend-difference">
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-        <Link to="/" className="text-3xl font-bold text-purple-500">ChatHub</Link>
-
+        <Link to="/" className="text-3xl font-bold text-purple-500">GhostNet</Link>
+      {/* <div className=" w-10 h10"><img className="rounded-full  "src={myImage}></img></div> */}
         {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-8 text-gray-300 font-medium">
           <li>
