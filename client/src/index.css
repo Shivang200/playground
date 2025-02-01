@@ -58,9 +58,9 @@
 .typing-effect {
   display: inline-block;
   overflow: hidden; /* Ensures the text is hidden initially */
-  white-space: nowrap; /* Prevents text from wrapping */
+  white-space: normal; /* Prevents text from wrapping */
   border-right: 3px solid #fff; /* Creates the cursor effect */
-  animation: typing 3.5s steps(30) 4s forwards, blink 0.75s step-end infinite; /* Typing animation */
+  animation: typing 3.5s steps(42) 4s forwards, blink 0.75s step-end infinite; /* Typing animation */
   min-width: 0
 }
 

@@ -17,10 +17,10 @@ const NavbarForChat = () => {
           GhostNet
         </Link>
 
-        {/* Logout Button - Now aligned with ghostNEt */}
+        {/* Logout Button - Now aligned with ChatHub */}
         <button
           onClick={handleLogout}
-          className="text-sm md:text-base px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md text-white"
+          className="text-sm 2xl:mr-32 xl:mr-36 mt-1 md:text-base px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md text-white"
         >
           Logout
         </button>
