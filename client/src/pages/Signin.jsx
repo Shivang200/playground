@@ -16,6 +16,7 @@ export default function Signin() {
   const handleSignin = async () => {
     try {
       // Make the API call to sign in
+      //vite_APP_url is backend server url was set as env variable in vercel itself
       const resp = await axios.post(`${import.meta.env.VITE_APP_URL}/user/signin`, {
       username: username,
       passwords:password

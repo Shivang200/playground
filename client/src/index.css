@@ -56,12 +56,20 @@
 }
 /* Typing effect */
 .typing-effect {
-  display: inline-block;
+  display: block;
   overflow: hidden; /* Ensures the text is hidden initially */
-  white-space: normal; /* Prevents text from wrapping */
-  border-right: 3px solid #fff; /* Creates the cursor effect */
-  animation: typing 3.5s steps(42) 4s forwards, blink 0.75s step-end infinite; /* Typing animation */
-  min-width: 0
+  white-space: nowrap; /* Prevents text from wrapping */
+  /* border-right: 3px solid #fff; Creates the cursor effect */
+  animation: typing 3.5s steps(42) 4s forwards; /* Typing animation */
+  min-width: 0;
+}
+.typing-effect1 {
+  display: block;
+  overflow: hidden; /* Ensures the text is hidden initially */
+  white-space: nowrap; /* Prevents text from wrapping */
+  opacity: 0;
+  animation: typing1 3.5s steps(42) 7.5s forwards, blink 0.75s step-end infinite; /* Typing animation */
+  min-width: 0;
 }
 
 /* Typing animation */
@@ -71,6 +79,24 @@
   }
   to {
     width: 100%;
+    
+  }
+}
+@keyframes fadeIn {
+  from {
+  }
+  to {
+  }
+}
+@keyframes typing1 {
+  from {
+    opacity: 0;
+    width: 0;
+  }
+  to {
+    opacity: 1;
+    width: 100%;
+    border-right: 3px solid #fff; /* Creates the cursor effect */
   }
 }
 
