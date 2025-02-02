@@ -82,12 +82,7 @@
     
   }
 }
-@keyframes fadeIn {
-  from {
-  }
-  to {
-  }
-}
+
 @keyframes typing1 {
   from {
     opacity: 0;

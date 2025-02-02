@@ -33,7 +33,7 @@ const HeroSection = () => {
         </h1>
         <p className="text-lg mb-6">
           Join GhostNet and experience the freedom of anonymous communication. No
-          names, no pressure, just pure conversations.
+          real names, no pressure, just pure conversations.
         </p>
         {login? 
           <Link
