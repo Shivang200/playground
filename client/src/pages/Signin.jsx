@@ -22,8 +22,10 @@ export default function Signin() {
     
     const resp = await axios.post(`${import.meta.env.VITE_APP_URL}/user/signin`, {
      username: username,
-     password:password
+     passwords:password
     });
+    console.log("API Response:", resp);
+console.log("Token:", resp.data.token);
 
     // Save the token to 
    
