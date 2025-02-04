@@ -17,6 +17,10 @@ export default function Signin() {
 
  const redirectPath = new URLSearchParams(location.search).get("redirect") || "/";
  const handleSignin = async () => {
+  // if (!username || !password) {
+  //   setError("Username and password are required.");
+  //   return; // Don't proceed with the API request if either field is empty
+  // }
   try {
     // Make the API call to sign in
     
